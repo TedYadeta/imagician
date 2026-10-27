@@ -22,6 +22,10 @@ alpurl="https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86_64"
 arcimage=archlinux-2026.10.01
 arcurl="https://mirror.rackspace.com/archlinux/iso/2026.10.01"
 
+## CAC VARS ##
+cacimage=cachyos-desktop-linux-260809
+cacurl="https://cdn77.cachyos.org/ISO/desktop/260809"
+
 ## DEB VARS ##
 debimage=debian-13.7.0
 deburl="https://cdimage.debian.org/debian-cd/13.7.0/amd64/iso-cd"
@@ -64,6 +68,19 @@ dl-ver-arc() {
     echo "Verifying $arcimage..."
     cd ~/Images/$arcimage
     head -n 1 sha256sums.txt | sha256sum --check
+}
+
+dl-ver-cac() {
+    echo "Creatinf folder for $cacimage"
+    mkdir -p ~/Images/$cacimage
+    echo "Downloading $cacimage..."
+        wget --no-verbose --show-progress -P ~/Images/$cacimage $cacurl/$cacimage.iso
+    echo "Downloading $cacimage checksums..."
+        wget --no-verbose --show-progress -P ~/Images/$cacimage $cacurl/$cacimage.iso.sha256
+
+    echo "Verifying $cacimage..."
+    cd ~/Images/$cacimage
+    head -n 1 $cacimage.iso.sha256 | sha256sum --check
 }
 
 dl-ver-deb() {
@@ -122,6 +139,7 @@ dl-ver-ubu() {
 dl-ver-all() {
     dl-ver-alp;
     dl-ver-arc;
+    dl-ver-cac;
     dl-ver-deb;
     dl-ver-sus;
     dl-ver-ubu;
@@ -134,6 +152,7 @@ while true; do
     case "$1" in
         --alpine) dl-ver-alp; shift ;;
         --arch) dl-ver-arc; shift ;;
+        --cachyos) dl-ver-cac; shift ;;
         --debian) dl-ver-deb; shift ;;
         --nixos) dl-ver-nix; shift ;;
         --opensuse) dl-ver-sus; shift ;;
